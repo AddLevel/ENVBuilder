@@ -20,7 +20,7 @@ Start the ENV builder by running:
 Start-ENVBuilder -ConfigurationDataFile 'C:\Program Files\WindowsPowerShell\Modules\ENVBuilder\1.0.0.0\Examples\WindowsServer2016Summit\WindowsServer2016Summit.psd1' –Verbose
 ```
 When you run it the first time, a lot of pre requisites are missing:
-![alt text](screenshots/1PrereqsMissing.png "First Run Prereqs are missing")
+![alt text](https://github.com/AddLevel/ENVBuilder/blob/master/Screenshots/1PrereqsMissing.png "First Run Prereqs are missing")
 License
 ----
 
