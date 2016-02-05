@@ -6,9 +6,9 @@
             NodeName                    = "*"
             PSDscAllowPlainTextPassword = $true
             PSDscAllowDomainUser        = $true
-            ENVSource                   = "C:\Demo"
+            ENVSource                   = "C:\cMDTtest"
             ENVisopath                  = "C:\ISO"
-            ENVvmpath                   = "C:\VMS"
+            ENVvmpath                   = "C:\cMDTtest\VMS"
             ENVlocalpassword            = "P@ssw0rd"
             ENVprereqs                  = $true
             ENVvhdxtemplates            = @(
@@ -49,7 +49,7 @@
 
 
         @{
-            NodeName       = "DEMO-MDT"
+            NodeName       = "DEMO-MEM"
             Role           = "Member"
             InterfaceAlias = "Ethernet"
             IPAddress      = "192.168.0.22"
