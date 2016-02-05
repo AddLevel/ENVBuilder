@@ -4,7 +4,7 @@ A PowerShell Module that uses DSC for building tests
 This module is an environment builder that you can use to build local testcases and demos with. We use it on AddLevel for simple DSC scenarios and testing our cMDT DSC module with.
 
 ### Version
-3.2.7
+1.0.0.0
 
 ### Installation
 Download the module by running the below command:
