@@ -40,8 +40,9 @@ Convert-WindowsImage -UnattendPath C:\LabFiles\unattend.xml -VHDPath C:\LabFiles
 Also, if you need to build a image for Nano server, you might be warned about some more prereqfiles that you need to download.
 When thay are in place under the **Nano** folder, you can build the template disk by runnig the command:
 ```sh
-New-NanoServerVHD.ps1 -ServerISO C:\LabFiles\ISO\10586.0.151029-1700.TH2_RELEASE_SERVER_OEMRET_X64FRE_EN-US.ISO -Packages 'Compute','Guest','Containers','ReverseForwarders','DSC' -VHDFormat VHDX -UnattendedContent C:\LabFiles\unattend.xml -DestVHD C:\LabFiles\VMS\Templates\NANO.vhdx -AdministratorPassword P@ssw0rd
+New-NanoServerVHD.ps1 -ServerISO C:\LabFiles\ISO\10586.0.151029-1700.TH2_RELEASE_SERVER_OEMRET_X64FRE_EN-US.ISO -Packages 'Compute','Guest','Containers','ReverseForwarders','DSC' -VHDFormat VHDX -Timezone 'W. Europe Standard Time' -DestVHD C:\LabFiles\Nano.vhdx -ComputerName NANO -AdministratorPassword P@ssw0rd
 ```
+(NOTE: That im setting the TimeZone in this image to "W. Europe Standard Time", you might run your demo in a diffrent zone)
 
 Now the ENV Builder should work and it will build a working domain controller and member servers for you to test with.
 
