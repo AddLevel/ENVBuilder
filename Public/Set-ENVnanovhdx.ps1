@@ -21,10 +21,10 @@ Function Set-ENVNanoVHDX{
         ComputerName          = 'NANO'
         AdministratorPassword = $Password
         Packages              = 'DSC','Guest'
-        VHDFormat             = VHDX
+        VHDFormat             = 'VHDX'
     }
     
-    . $Source\Tools\New-NanoServerVHD.ps1 @Parameters
+    . $Source\Tools\Nano\New-NanoServerVHD.ps1 @Parameters
 }
 
 
@@ -32,9 +32,12 @@ Function Set-ENVNanoVHDX{
 <#
  .\New-NanoServerVHD.ps1 `
             -ServerISO 'C:\LabFiles\ISO\10586.0.151029-1700.TH2_RELEASE_SERVER_OEMRET_X64FRE_EN-US.ISO' `
-            -DestVHD c:\LabFiles\VMS\Templates\NANO.vhdx `
+            -DestVHD C:\LabFiles\VMS\Templates\NANO.vhdx `
             -ComputerName NANO `
             -AdministratorPassword 'P@ssw0rd' `
-            -Packages 'DSC','Guest' `
+            -Packages 'Containers','DSC','Guest' `
             -VHDFormat VHDX
+
+
+C:\LabFiles\Tools\Nano>New-NanoServerVHD.ps1 -ServerISO 'C:\LabFiles\ISO\10586.0.151029-1700.TH2_RELEASE_SERVER_OEMRET_X64FRE_EN-US.ISO' -DestVHD C:\LabFiles\VMS\Templates\NANO.vhdx -ComputerName NANO -AdministratorPassword 'P@ssw0rd' -Packages 'Containers','DSC','Guest' -VHDFormat VHDX
 #>

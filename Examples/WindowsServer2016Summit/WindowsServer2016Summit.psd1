@@ -6,6 +6,8 @@
             NodeName                    = "*"
             PSDscAllowPlainTextPassword = $true
             PSDscAllowDomainUser        = $true
+            DomainName                  = "demo.local"
+            DomainNetBios               = "demo"
             ENVSource                   = "C:\LabFiles"
             ENVisopath                  = "C:\LabFiles\ISO"
             ENVvmpath                   = "C:\LabFiles\VMS"
@@ -37,7 +39,7 @@
 
         @{
             NodeName       = "W16-DC1"
-            Role           = "PrimaryDomainController"
+            Role           = "PrimaryDC"
             InterfaceAlias = "Ethernet"
             IPAddress      = "192.168.0.21"
             SubnetMask     = 24
@@ -78,7 +80,7 @@
             JoinDomain     = $true
             DomainName     = "demo.local"
             IsVM           = $true
-            UseTemplate    = "NANO"
+            UseTemplate    = "W2016"
             Memory         = 1GB
             CPUCount       = 1
             UseSwitch      = "DEMO"

@@ -12,9 +12,10 @@ Function Set-ENVconfiguration{
     #Load Configuration from ConfigurationDataFile:
     [string]$Source        = $ConfigurationDataFile.AllNodes.ENVSource
     [string]$AdminPassword = $ConfigurationDataFile.AllNodes.ENVlocalpassword
+    [string]$Domain        = $ConfigurationDataFile.AllNodes.DomainNetBios
 
     $Pass              = ConvertTo-SecureString $AdminPassword -AsPlainText -Force 
-    $DomainAdminCred   = New-Object System.Management.Automation.PSCredential ("DEMO\Administrator", $Pass) #TODO: Change DomainName
+    $DomainAdminCred   = New-Object System.Management.Automation.PSCredential ("$Domain\Administrator", $Pass)
     $SafeModeAdminCred = New-Object System.Management.Automation.PSCredential ("Administrator", $Pass)
 
     Configuration Contracts
@@ -36,6 +37,7 @@ Function Set-ENVconfiguration{
         Import-DscResource -ModuleName xNetworking
         Import-DscResource -ModuleName xDhcpServer
 
+        #ROLE: HYPER-V
         node $AllNodes.Where{$_.Role -match "HyperV"}.NodeName
         {
             #TODO: Get The localhost parameters...
@@ -139,45 +141,31 @@ Function Set-ENVconfiguration{
                     }  
                 }
 
-
-                If ($vm.Generation -eq 1) #TODO: this is ugly... but hey, it works!
+                #TODO: No Support for GEN 1 Machines
+                xVMHyperV "$($vm.NodeName)vm"
                 {
-                    xVMHyperV "$($vm.NodeName)vm"
-                    {
-                        Ensure          = "Present"
-                        Name            = "$($vm.NodeName)"
-                        VhdPath         = "$VMFolder\$($vm.NodeName)\Virtual Hard Disks\$($vm.NodeName)OSDrive.Vhd"
-                        SwitchName      = "$($vm.UseSwitch)"
-                        State           = "Running"
-                        Path            = "$VMFolder\"
-                        StartupMemory   = "$($vm.Memory)"
-                        ProcessorCount  = "$($vm.CPUCount)"
-                        RestartIfNeeded = $true
-                        Generation      = 1
-                    }
+                    Ensure          = "Present"
+                    Name            = "$($vm.NodeName)"
+                    VhdPath         = "$VMFolder\$($vm.NodeName)\Virtual Hard Disks\$($vm.NodeName)OSDrive.Vhdx"
+                    SwitchName      = "$($vm.UseSwitch)"
+                    State           = "Running"
+                    Path            = "$VMFolder\"
+                    StartupMemory   = "$($vm.Memory)"
+                    ProcessorCount  = "$($vm.CPUCount)"
+                    RestartIfNeeded = $true
+                    Generation      = 2
                 }
-                Else{
-                    xVMHyperV "$($vm.NodeName)vm"
-                    {
-                        Ensure          = "Present"
-                        Name            = "$($vm.NodeName)"
-                        VhdPath         = "$VMFolder\$($vm.NodeName)\Virtual Hard Disks\$($vm.NodeName)OSDrive.Vhdx"
-                        SwitchName      = "$($vm.UseSwitch)"
-                        State           = "Running"
-                        Path            = "$VMFolder\"
-                        StartupMemory   = "$($vm.Memory)"
-                        ProcessorCount  = "$($vm.CPUCount)"
-                        RestartIfNeeded = $true
-                        Generation      = 2
-                    }
-                }            
+             
             }
         }
 
-        node $AllNodes.Where{$_.Role -match "PrimaryDomainController"}.NodeName
+
+
+        #ROLE: PRIMARYDOMAINCONTROLLER
+        node $AllNodes.Where{$_.Role -match "PrimaryDC"}.NodeName
         {
             xComputer SetName { 
-              Name = $Node.NodeName 
+              Name = $Node.NodeName               
             }
 
             xPendingReboot RenameComputerReboot 
@@ -199,17 +187,17 @@ Function Set-ENVconfiguration{
             }
 
             WindowsFeature ADDSInstall {
-                Ensure = 'Present'
-                Name   = 'AD-Domain-Services'
+                Ensure               = 'Present'
+                Name                 = 'AD-Domain-Services'
                 IncludeAllSubFeature = $true
             }
 
             WindowsFeature RSATTools
             {            
-                Ensure = 'Present'
-                Name   = 'RSAT-AD-Tools'
+                Ensure               = 'Present'
+                Name                 = 'RSAT-AD-Tools'
                 IncludeAllSubFeature = $true
-                DependsOn = '[WindowsFeature]ADDSInstall'
+                DependsOn            = '[WindowsFeature]ADDSInstall'
             }
 
             xADDomain FirstDC {
@@ -256,6 +244,7 @@ Function Set-ENVconfiguration{
             }
         }
 
+        #ROLE: MEMBER
         node $AllNodes.Where{$_.Role -match "Member"}.NodeName
         {
             xIPAddress SetIP {
@@ -277,14 +266,36 @@ Function Set-ENVconfiguration{
             }
 
             xComputer JoinDoomain {
-              Name       = $Node.NodeName
-              DomainName = $Node.DomainName
-              Credential = $domainCred
+              Name            = $Node.NodeName
+              DomainName      = $Node.DomainName
+              Credential      = $domainCred
             }
 
             xPendingReboot DomainJoinReboot 
             {  
                 Name = ‘AfterDominJoin’
+            }
+        }
+
+
+        #ROLE: NANO
+        node $AllNodes.Where{$_.Role -match "Nano"}.NodeName
+        {
+            xIPAddress SetIP {
+                IPAddress      = $Node.IPAddress
+                InterfaceAlias = $Node.InterfaceAlias
+                SubnetMask     = $Node.SubnetMask
+                AddressFamily  = $Node.AddressFamily
+            }
+
+            xDNSServerAddress SetDNS {
+                Address        = $Node.DNSAddress
+                InterfaceAlias = $Node.InterfaceAlias
+                AddressFamily  = $Node.AddressFamily
+            }
+
+            xComputer SetComputerName {
+              Name       = $Node.NodeName
             }
         }
     }

@@ -24,6 +24,12 @@ Description = 'Build test enviroments based on DSC'
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
 
-FunctionsToExport = '*'
-
+FunctionsToExport = @(  'Start-ENVBuilder',
+                        'Get-ENVprereqs',
+                        'Set-ENVunattedXML',
+                        'Set-ENVvhdx',
+                        'Set-ENVnanovhdx',
+                        'Set-ENVlcmconfiguration',
+                        'Set-ENVconfiguration'
+                        )
 }
