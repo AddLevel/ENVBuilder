@@ -49,10 +49,27 @@
 
 
         @{
-            NodeName       = "DEMO-MEM"
+            NodeName       = "DEMO-MEM1"
             Role           = "Member"
             InterfaceAlias = "Ethernet"
             IPAddress      = "192.168.0.22"
+            SubnetMask     = 24
+            AddressFamily  = "IPv4"
+            DNSAddress     = "192.168.0.21"
+            JoinDomain     = $true
+            DomainName     = "demo.local"
+            IsVM           = $true
+            UseTemplate    = "W2012"
+            Memory         = 2GB
+            CPUCount       = 2
+            UseSwitch      = "DEMO"
+        },
+        
+                @{
+            NodeName       = "DEMO-MEM2"
+            Role           = "Member"
+            InterfaceAlias = "Ethernet"
+            IPAddress      = "192.168.0.23"
             SubnetMask     = 24
             AddressFamily  = "IPv4"
             DNSAddress     = "192.168.0.21"
